@@ -4,14 +4,34 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
     <title>Covid-19 Data Chart Project</title>
 </head>
 <body>
-    <div class="chart-container">
-        <canvas id="myChart"></canvas>
+    <div class="app-container">
+        <div class="chart-container">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="continent-buttons-container">
+            <input class="selected" type="button" value="Asia">
+            <input type="button" value="Europe">
+            <input type="button" value="Americas">
+            <input type="button" value="Africa">
+            <input type="button" value="Oceania">
+            <input type="button" value="World">
+        </div>
+        <div class="data-buttons-container">
+            <input class="selected" type="button" value="confirmed">
+            <input type="button" value="deaths">
+            <input type="button" value="recovered">
+            <input type="button" value="critical">
+        </div>
+    </div>
+    <div class="countries-container">
+        
     </div>
     <script src="Chart.js"></script>
     <script src="Chart.min.js"></script>
-    <script src="index.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>

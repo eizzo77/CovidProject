@@ -1,3 +1,9 @@
+:root {
+  --dark-theme: #333;
+  --dark-theme-button: #3333;
+  --dark-theme-text: #f2f2f2;
+}
+
 * {
   margin: 0px;
   padding: 0px;
@@ -5,11 +11,49 @@
 }
 
 body {
+  background-color: var(--dark-theme);
+  color: var(--dark-theme-text);
   height: 100vh;
 }
 
 .chart-container {
+  padding: 2vh;
   position: relative;
-  height: 40vh;
+  height: 80vh;
   width: 80vw;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+}
+
+.continent-buttons-container,
+.data-buttons-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh;
+  width: 20vw;
+  padding: 2vh;
+}
+
+input {
+  background-color: var(--dark-theme-button);
+  padding: 1em;
+}
+
+.selected {
+  border: 1px solid red;
+}
+
+.countries-container {
+  text-align: center;
+  height: 20vh;
+}
+
+.countries-container > button {
+  background-color: dimgray;
+  padding: 1em;
 }

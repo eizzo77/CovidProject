@@ -20,12 +20,27 @@ const getCountriesByRegion = async (region) => {
   return regionCountriesData;
 };
 
+const getWorld = async () => {
+  //   const asiaArr = await getCountriesByRegion("asia");
+  //   const europeArr = await getCountriesByRegion("europe");
+  //   const americasArr = await getCountriesByRegion("americas");
+  //   const africaArr = await getCountriesByRegion("africa");
+  //   return asiaArr.concat(europeArr, americasArr, africaArr);
+  const response = await fetch(
+    `https://api.codetabs.com/v1/proxy?quest=https://restcountries.herokuapp.com/api/v1/`
+  );
+  const regionCountriesData = await response.json();
+  return regionCountriesData;
+};
+
 const getCountryCovidStats = async (countryCode) => {
   const response = await fetch(
     `https://api.codetabs.com/v1/proxy?quest=http://corona-api.com/countries/${countryCode}`
   );
+  //   console.log(`${countryCode}`);
+  //   console.log(response);
+
   const countryCovidData = await response.json();
-  //   console.log(countryCovidData.data);
   const countryStatsObj = {
     population: countryCovidData.data.population,
     confirmed: countryCovidData.data.latest_data.confirmed,
@@ -38,22 +53,50 @@ const getCountryCovidStats = async (countryCode) => {
 };
 let localObj = {};
 
-getCountriesByRegion("europe").then((countries) => {
-  Object.keys(countries).forEach((c) => {
+const start = async () => {
+  const countries = await getWorld();
+  console.log(countries);
+  countries.splice(
+    countries.findIndex((c) => c.cca2 === "XK"),
+    1
+  );
+  //   console.log(countries);
+  const promises = countries.map((c) => getCountryCovidStats(c.cca2));
+  const promiseAll = await Promise.all(promises);
+  countries.forEach((c, i) => {
     const countryObj = {
-      countryCode: countries[c].cca2,
+      countryCode: c.cca2,
+      covidData: promiseAll[i],
     };
-    // console.log(countryObj.countryCode);
-    localObj[countries[c].name.common] = countryObj;
-    const covidStatsObj = getCountryCovidStats(countryObj.countryCode).then(
-      (covidStats) => {
-        countryObj["latestData"] = covidStats;
-      }
-    );
-    // console.log(covidStatsObj);
-    countryObj["latestData"] = covidStatsObj;
+    localObj[countries[i].name.common] = countryObj;
   });
+  console.log(localObj);
+  // console.log(countryObj);
+  // console.log(covidStatsObj);
+  //   countryObj["covidData"] = covidStatsObj;
+  //   }
+};
+
+//! START HERE
+
+start().then(() => {
+  updateChart();
+  myChart.update();
 });
+
+const updateChart = () => {
+  //   console.log(localObj["Sweden"].covidData.confirmed);
+  const countryKeys = Object.keys(localObj);
+  myChart.data.labels = countryKeys;
+  const countryConfirmedArr = countryKeys.map((c) => {
+    return localObj[c].covidData.confirmed;
+  });
+  //   countryConfirmedArr.forEach((c, i) =>
+  //     myChart.data.datasets.data.push(countryConfirmedArr[i])
+  //   );
+  myChart.data.datasets[0].data = countryConfirmedArr;
+  //   console.log(localObj["Albania"]["covidData"]);
+};
 
 // getCountryCovidStats("SE")
 
@@ -61,11 +104,11 @@ var ctx = document.querySelector("#myChart").getContext("2d");
 var myChart = new Chart(ctx, {
   type: "line",
   data: {
-    labels: ["Red", "Blue", "Yellow"],
+    labels: [],
     datasets: [
       {
-        label: "# of Votes",
-        data: [12, 19, 3, 5, 2, 3],
+        label: "Covid 19 Confirmed cases",
+        data: [],
         backgroundColor: [
           "rgba(255, 99, 132, 0.2)",
           "rgba(54, 162, 235, 0.2)",
@@ -98,4 +141,3 @@ var myChart = new Chart(ctx, {
     },
   },
 });
-myChart.data.labels = ["A", "b", "C", "d"];
